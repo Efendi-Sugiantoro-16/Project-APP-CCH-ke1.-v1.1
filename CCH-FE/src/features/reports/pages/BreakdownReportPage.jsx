@@ -29,6 +29,7 @@ import { StatCard } from '../../../shared/ui/StatCard.jsx'
 import { ReportFilterBar } from '../components/ReportFilterBar.jsx'
 import { exportToExcel, exportToCsv, printExecutiveReport } from '../../../shared/utils/excelExport.js'
 import { formatDateTime } from '../../complaints/format.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 function formatDuration(seconds) {
   if (!seconds || seconds <= 0) return '0 hari'
@@ -779,7 +780,10 @@ export function BreakdownReportPage() {
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredDetailData.map((row, index) => {
                     const isLongDuration = (row.duration_seconds || 0) > 86400 * 3
-                    const ticketLink = `/workspace/complaints/open/${row.complaint_id}`
+                    const ticketLink = complaintDetailPath({
+                      id: row.complaint_id,
+                      status_code: row.latest_status_code || row.final_status_code || row.status_code,
+                    })
                     const rowKey = `${row.complaint_id || 'ticket'}-${row.target_office_update_code || row.origin_office_update_code || index}`
                     return (
                       <tr

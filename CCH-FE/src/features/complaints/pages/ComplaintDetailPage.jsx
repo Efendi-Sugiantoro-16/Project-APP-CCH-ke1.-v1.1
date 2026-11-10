@@ -47,9 +47,10 @@ export function ComplaintDetailPage({ completed = false }) {
   }, [id, token, reloadKey, completed])
 
   const followUps = useWorkspaceApi(() => {
-    if (!id || !token) return Promise.resolve([])
+    // Backend exposes follow-ups only for open tickets; skip to avoid a 404.
+    if (!id || !token || completed) return Promise.resolve([])
     return followUpsApi.listForTicket(token, id)
-  }, [id, token, reloadKey])
+  }, [id, token, reloadKey, completed])
 
   const documents = useWorkspaceApi(() => {
     if (!id || !token) return Promise.resolve([])
@@ -60,6 +61,21 @@ export function ComplaintDetailPage({ completed = false }) {
     if (!id || !token) return Promise.resolve([])
     return documentApi.listFilesForTicket(token, id, { completed })
   }, [id, token, reloadKey, completed])
+
+  /**
+   * Status transitions can close a ticket (109). The open detail endpoint
+   * excludes closed tickets, so refetching it would 404. Navigate to the
+   * completed detail route instead.
+   */
+  function handleTransitioned(nextStatusCode) {
+    if (String(nextStatusCode) === '109' && !completed) {      navigate(`/workspace/complaints/completed/${id}`, {
+        replace: true,
+        state: { successMessage: 'Tiket telah diselesaikan (109) dan dipindahkan ke daftar selesai.' },
+      })
+      return
+    }
+    reload()
+  }
 
   if (detail.loading) return <DetailLoading />
   if (detail.error || !detail.data) return <DetailError message={detail.error} />
@@ -138,17 +154,24 @@ export function ComplaintDetailPage({ completed = false }) {
               complaintId={data.id}
               statusCode={data.status_code}
               complaint={data}
-              onTransitioned={reload}
+              onTransitioned={handleTransitioned}
             />
           ) : null}
 
-          <FollowUpPanel
-            complaintId={data.id}
-            items={followUps.data || []}
-            loading={followUps.loading}
-            error={followUps.error}
-            reload={reload}
-          />
+          {/* Follow-up routes are open-ticket only in the backend contract. */}
+          {completed ? (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-500">
+              Follow-up tidak tersedia untuk tiket selesai (109).
+            </div>
+          ) : (
+            <FollowUpPanel
+              complaintId={data.id}
+              items={followUps.data || []}
+              loading={followUps.loading}
+              error={followUps.error}
+              reload={reload}
+            />
+          )}
           <DocumentsPanel
             complaintId={data.id}
             items={documents.data || []}

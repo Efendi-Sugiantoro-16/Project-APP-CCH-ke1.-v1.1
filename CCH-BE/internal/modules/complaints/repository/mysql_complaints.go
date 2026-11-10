@@ -431,7 +431,7 @@ FROM cchentri AS c
 LEFT JOIN cch_jenis_penanganan AS s ON s.ID_Status = c.Status_Akhir
 WHERE c.ID_Pengaduan = ?
 	AND c.Status_Akhir = '109'
-	AND (c.Kantor_Asal = ? OR c.Kantor_Tujuan = ? OR FIND_IN_SET(?, REPLACE(COALESCE(c.Kantor_Tembusan, ''), ' ', '')) > 0)
+	AND (c.Kantor_Asal = ? OR c.Kantor_Tujuan = ? OR FIND_IN_SET(?, REPLACE(COALESCE(c.Kantor_Tembusan, ''), ' ', '')) > 0 OR FIND_IN_SET(?, REPLACE(COALESCE(c.Semua_Tujuan, ''), ' ', '')) > 0)
 LIMIT 1`
 
 const callCenterStatusOptionsQuerySQL = `SELECT
@@ -1246,7 +1246,7 @@ func (repository *MySQLComplaintRepository) GetCompletedTicketForOffice(ctx cont
 	if err != nil {
 		return complaints.ComplaintDetail{}, err
 	}
-	row := repository.db.QueryRowContext(ctx, completedComplaintDetailQuerySQL, query.ComplaintID, query.OfficeCode, query.OfficeCode, query.OfficeCode)
+	row := repository.db.QueryRowContext(ctx, completedComplaintDetailQuerySQL, query.ComplaintID, query.OfficeCode, query.OfficeCode, query.OfficeCode, query.OfficeCode)
 	detail, err := scanComplaintDetail(row)
 	if err != nil {
 		return complaints.ComplaintDetail{}, fmt.Errorf("get completed complaint detail: %w", err)

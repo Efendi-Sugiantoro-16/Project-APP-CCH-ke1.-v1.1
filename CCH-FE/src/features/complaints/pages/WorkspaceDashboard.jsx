@@ -32,6 +32,7 @@ import { ComplaintTable } from '../components/ComplaintTable.jsx'
 import { QuickComplaintModal } from '../components/create/QuickComplaintModal.jsx'
 import { formatDateTime } from '../format.js'
 import { useWorkspaceApi } from '../useWorkspaceApi.js'
+import { complaintDetailPath } from '../complaintPath.js'
 
 function formatYMD(date) {
   const y = date.getFullYear()
@@ -538,7 +539,7 @@ function FollowUpListItem({ entry, isOverdue }) {
       </span>
       <div className="min-w-0 flex-1">
         <Link
-          to={`/workspace/complaints/open/${entry.complaint_id}`}
+          to={complaintDetailPath(entry)}
           className={cx(
             'mono text-xs font-semibold hover:underline',
             isOverdue ? 'text-rose-600 hover:text-rose-700 dark:text-rose-400' : 'text-blue-600 hover:text-blue-700 dark:text-blue-400'

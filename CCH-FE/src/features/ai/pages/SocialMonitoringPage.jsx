@@ -26,6 +26,7 @@ import { PageHeader } from '../../../shared/ui/PageHeader.jsx'
 import { Card, CardHeader } from '../../../shared/ui/Card.jsx'
 import { StatCard } from '../../../shared/ui/StatCard.jsx'
 import { socialApi } from '../api/socialApi.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 const PLATFORM_CONFIG = {
   all: { label: 'Semua Platform', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200' },
@@ -621,7 +622,7 @@ export function SocialMonitoringPage() {
                             Tiket CCH: {item.ticket_id} (101 ENTRI)
                           </span>
                           <Link
-                            to={`/workspace/complaints/open/${item.ticket_id}`}
+                            to={complaintDetailPath({ id: item.ticket_id, status_code: item.status_code })}
                             className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
                           >
                             Buka Investigasi

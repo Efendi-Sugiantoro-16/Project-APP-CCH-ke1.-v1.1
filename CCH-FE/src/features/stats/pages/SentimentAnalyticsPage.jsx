@@ -32,6 +32,7 @@ import { StatCard } from '../../../shared/ui/StatCard.jsx'
 import { Pagination } from '../../../shared/ui/Pagination.jsx'
 import { exportToExcel, exportToCsv } from '../../../shared/utils/excelExport.js'
 import { virtualCsApi } from '../../ai/api/virtualCsApi.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 export function SentimentAnalyticsPage() {
   const [data, setData] = useState(null)
@@ -1094,7 +1095,7 @@ export function SentimentAnalyticsPage() {
 
               <div className="flex items-center gap-2">
                 <Link
-                  to={`/workspace/complaints/open/${selectedTicket.ticket_id}`}
+                  to={complaintDetailPath({ id: selectedTicket.ticket_id, status_code: selectedTicket.status_code })}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition"
                 >
                   Buka Detail Tiket CCH

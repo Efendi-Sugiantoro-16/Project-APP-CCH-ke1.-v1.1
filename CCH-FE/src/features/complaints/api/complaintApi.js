@@ -18,10 +18,6 @@ async function readPaged(path, token, params = {}) {
 }
 
 export const complaintApi = {
-  count(token, path) {
-    return apiRequest(path, { token }).then((payload) => payload?.count ?? 0)
-  },
-
   listOpen(token, { limit = 25, offset = 0 } = {}) {
     return readPaged('/api/v1/complaints/call-center/open', token, { limit, offset })
   },

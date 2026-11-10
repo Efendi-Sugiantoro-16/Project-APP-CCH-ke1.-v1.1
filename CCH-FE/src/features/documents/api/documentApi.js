@@ -18,7 +18,13 @@ async function readPaged(path, token, params = {}) {
 }
 
 export const documentApi = {
-  /** List legacy & grouped document metadata */
+  /**
+   * List legacy & grouped document metadata.
+   *
+   * Options are a single object (never positional): `{ limit, offset, completed }`.
+   * `completed` selects the completed-ticket route; passing it positionally
+   * would be silently ignored.
+   */
   listForTicket(token, id, { limit = 25, offset = 0, completed = false } = {}) {
     const basePath = completed
       ? `/api/v1/complaints/call-center/completed/${id}/documents`

@@ -3,19 +3,20 @@ import { ArrowRight, Building2, Package } from 'lucide-react'
 import { StatusBadge } from './StatusBadge.jsx'
 import { DataTable } from '../../../shared/ui/DataTable.jsx'
 import { formatDateTime } from '../format.js'
+import { complaintDetailPath } from '../complaintPath.js'
 
-const OPEN_PATH = '/workspace/complaints/open'
-const CLOSED_PATH = '/workspace/complaints/completed'
-
-function target(item, variant) {
-  if (variant === 'closed') return `${CLOSED_PATH}/${item.id}`
-  return `${OPEN_PATH}/${item.id}`
-}
-
+/**
+ * Link to a ticket detail page.
+ *
+ * The route is derived from the ticket status (not from the list variant) so a
+ * ticket that was closed from within an "open" list still links to the
+ * completed detail route instead of returning 404.
+ */
 function TicketLink({ item, variant }) {
+  const href = complaintDetailPath(item, { fallback: variant === 'closed' ? 'completed' : 'open' })
   return (
     <Link
-      to={target(item, variant)}
+      to={href}
       className="mono inline-flex items-center gap-1.5 font-semibold text-blue-600 transition hover:text-blue-700"
     >
       {item.id || item.complaint_id}

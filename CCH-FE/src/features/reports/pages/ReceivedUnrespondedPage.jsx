@@ -18,6 +18,7 @@ import { StatCard } from '../../../shared/ui/StatCard.jsx'
 import { ReportFilterBar } from '../components/ReportFilterBar.jsx'
 import { exportToExcel, exportToCsv, printExecutiveReport } from '../../../shared/utils/excelExport.js'
 import { formatDateTime } from '../../complaints/format.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 const PAGE_SIZE = 50
 
@@ -276,7 +277,7 @@ export function ReceivedUnrespondedPage() {
 
                       <td className="px-4 py-3 font-semibold text-red-600 dark:text-red-400">
                         <Link
-                          to={`/workspace/complaints/open/${item.complaint_id}`}
+                          to={complaintDetailPath(item)}
                           className="inline-flex items-center gap-1 hover:underline"
                         >
                           {item.complaint_id}

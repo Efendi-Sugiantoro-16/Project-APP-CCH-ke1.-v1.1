@@ -27,6 +27,7 @@ import { StatCard } from '../../../shared/ui/StatCard.jsx'
 import { Pagination } from '../../../shared/ui/Pagination.jsx'
 import { exportToExcel, exportToCsv, printExecutiveReport } from '../../../shared/utils/excelExport.js'
 import { formatDateTime } from '../../complaints/format.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 const STATUS_TABS = [
   { id: 'masih_terbuka', label: 'Masih Terbuka', color: 'emerald', desc: 'Tiket aktif yang belum selesai' },
@@ -924,9 +925,10 @@ export function DurationReportPage() {
                       {paginatedDetailData.map((row, idx) => {
                         const globalDetailIdx = (detailPage - 1) * detailPageSize + idx + 1
                         const isCompleted = row.final_status_code === '109'
-                        const detailUrl = isCompleted
-                          ? `/workspace/complaints/completed/${row.complaint_id}`
-                          : `/workspace/complaints/open/${row.complaint_id}`
+                        const detailUrl = complaintDetailPath({
+                          id: row.complaint_id,
+                          status_code: row.latest_status_code || row.final_status_code || row.status_code,
+                        })
                         const rowKey = `${row.complaint_id || 'duration'}-${row.office_code || row.target_office_code || ''}-${idx}`
 
                         return (

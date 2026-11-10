@@ -9,6 +9,7 @@ import { Pagination } from '../../../shared/ui/Pagination.jsx'
 import { StatusBadge } from '../../complaints/components/StatusBadge.jsx'
 import { formatDateTime } from '../../complaints/format.js'
 import { useWorkspaceApi } from '../../complaints/useWorkspaceApi.js'
+import { complaintDetailPath } from '../../complaints/complaintPath.js'
 
 const PAGE_SIZE = 25
 
@@ -33,7 +34,7 @@ function FollowUpTable({ items }) {
             <tr key={`${entry.complaint_id}-${entry.office_code}-${entry.status_code}`}>
               <td>
                 <Link
-                  to={`/workspace/complaints/open/${entry.complaint_id}`}
+                  to={complaintDetailPath(entry)}
                   className="mono text-xs font-semibold text-blue-600 hover:text-blue-700"
                 >
                   {entry.complaint_id}

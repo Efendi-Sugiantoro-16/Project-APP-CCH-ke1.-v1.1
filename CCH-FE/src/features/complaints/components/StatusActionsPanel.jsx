@@ -124,7 +124,9 @@ export function StatusActionsPanel({ complaintId, statusCode, complaint, onTrans
       })
       setFeedback(`Status tiket berhasil diperbarui menjadi ${selected} (${statusMeta(selected).label})!`)
       setDescription('')
-      onTransitioned?.()
+      // Pass the applied status so the parent can route closed tickets to the
+      // completed detail page instead of refetching the (now 404) open route.
+      onTransitioned?.(selected)
     } catch (transitionError) {
       setError(transitionError.message || 'Gagal memperbarui status aduan.')
     } finally {
