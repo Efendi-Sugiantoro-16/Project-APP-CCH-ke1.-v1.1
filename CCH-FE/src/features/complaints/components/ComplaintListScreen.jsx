@@ -11,16 +11,13 @@ import { useWorkspaceApi } from '../useWorkspaceApi.js'
 import { exportToExcel, exportToCsv } from '../../../shared/utils/excelExport.js'
 import { formatDateTime } from '../format.js'
 
-const PAGE_SIZE = 25
-
 /**
  * Shared complaint list screen.
  *
  * One implementation backs the open / completed / received / sent list pages,
- * which differ only by their data source and copy. Keeping the layout here
- * avoids four near-identical files.
+ * including a consistent server-side page-size selector and total-count display.
  */
-export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, variant, emptyTitle }) {
+export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, loadCount, variant, emptyTitle }) {
   const { token } = useContext(AuthContext)
   const location = useLocation()
   const [notification, setNotification] = useState(location.state?.successMessage || '')
@@ -38,17 +35,27 @@ export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, varian
     }
   }, [location.state])
 
-  const { data, loading, error, refresh } = useWorkspaceApi(
-    () => loadPage(token, { limit: PAGE_SIZE, offset }),
-    [token, offset, loadPage],
+  const { data, loading, error } = useWorkspaceApi(
+    () => loadPage(token, { limit: pageSize, offset }),
+    [token, offset, pageSize, loadPage],
   )
-  const items = data || []
+  const { data: countData } = useWorkspaceApi(
+    () => (loadCount ? loadCount(token) : Promise.resolve(null)),
+    [token, loadCount],
+  )
+  const items = Array.isArray(data) ? data : []
+  const totalCount = typeof countData === 'number' && Number.isFinite(countData) ? countData : undefined
+
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize)
+    setOffset(0)
+  }
 
   // Export handlers
   const handleExportExcel = () => {
     if (!items || items.length === 0) return
     const exportData = items.map((item, idx) => ({
-      No: idx + 1,
+      No: offset + idx + 1,
       'ID Tiket': item.id || item.complaint_id || '—',
       'Ringkasan Masalah': item.summary || '—',
       'Nomor Kiriman': item.shipment_number || '—',
@@ -64,7 +71,7 @@ export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, varian
   const handleExportCsv = () => {
     if (!items || items.length === 0) return
     const exportData = items.map((item, idx) => ({
-      No: idx + 1,
+      No: offset + idx + 1,
       'ID Tiket': item.id || item.complaint_id || '—',
       'Ringkasan Masalah': item.summary || '—',
       'Nomor Kiriman': item.shipment_number || '—',
@@ -145,14 +152,20 @@ export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, varian
           }
         >
           <ComplaintTable items={items} variant={variant} title={title} />
+        </StateBox>
+        {!loading && !error && (items.length > 0 || offset > 0 || totalCount > 0) && (
           <Pagination
             offset={offset}
             count={items.length}
-            perPage={PAGE_SIZE}
+            total={totalCount}
+            perPage={pageSize}
             loading={loading}
             onPage={setOffset}
+            pageSizeOptions={[10, 25, 50, 100]}
+            onPerPageChange={handlePageSizeChange}
+            label="tiket"
           />
-        </StateBox>
+        )}
       </Card>
     </div>
   )

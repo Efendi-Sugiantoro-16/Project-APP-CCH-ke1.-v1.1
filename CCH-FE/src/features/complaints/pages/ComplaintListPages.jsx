@@ -10,6 +10,7 @@ export function OpenComplaintsPage() {
       variant="open"
       emptyTitle="Tidak ada tiket terbuka"
       loadPage={(token, params) => complaintApi.listOpen(token, params)}
+      loadCount={(token) => complaintApi.countOpen(token)}
     />
   )
 }
@@ -23,6 +24,7 @@ export function CompletedComplaintsPage() {
       variant="closed"
       emptyTitle="Belum ada tiket selesai"
       loadPage={(token, params) => complaintApi.listCompleted(token, params)}
+      loadCount={(token) => complaintApi.countCompleted(token)}
     />
   )
 }
@@ -36,6 +38,7 @@ export function ReceivedOpenComplaintsPage() {
       variant="open"
       emptyTitle="Tidak ada tiket diterima terbuka"
       loadPage={(token, params) => complaintApi.listReceivedOpen(token, params)}
+      loadCount={(token) => complaintApi.countReceivedOpen(token)}
     />
   )
 }
@@ -49,6 +52,7 @@ export function SentOpenComplaintsPage() {
       variant="open"
       emptyTitle="Tidak ada tiket dikirim terbuka"
       loadPage={(token, params) => complaintApi.listSentOpen(token, params)}
+      loadCount={(token) => complaintApi.countSentOpen(token)}
     />
   )
 }
