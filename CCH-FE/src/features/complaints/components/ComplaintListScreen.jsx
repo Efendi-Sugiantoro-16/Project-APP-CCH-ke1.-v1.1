@@ -22,7 +22,7 @@ export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, loadCo
   const location = useLocation()
   const [notification, setNotification] = useState(location.state?.successMessage || '')
   const [offset, setOffset] = useState(0)
-  const [pageSize, setPageSize] = useState(25)
+  const [pageSize, setPageSize] = useState(25) //Default Set Page Size 25 
 
   useEffect(() => {
     if (location.state?.successMessage) {
@@ -161,7 +161,7 @@ export function ComplaintListScreen({ eyebrow, title, subtitle, loadPage, loadCo
             perPage={pageSize}
             loading={loading}
             onPage={setOffset}
-            pageSizeOptions={[10, 25, 50, 100]}
+            pageSizeOptions={[10, 25, 50, 100]} // Variabel opsi ukuran halaman
             onPerPageChange={handlePageSizeChange}
             label="tiket"
           />
